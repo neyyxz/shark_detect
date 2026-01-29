@@ -19,8 +19,8 @@ def set_background(image_file):
         .stApp {{
             background:
                 linear-gradient(
-                    rgba(0,0,0,0.50),
-                    rgba(0,0,0,0.50)
+                    rgba(0,0,0,0.75),
+                    rgba(0,0,0,0.75)
                 ),
                 url("data:image/jpg;base64,{encoded}");
             background-size: cover;
@@ -72,7 +72,7 @@ st.title("🦈 Shark Species Identifier")
 st.write("Upload foto hiu, sistem akan memprediksi spesiesnya.")
 st.write(
     "Sistem ini menggunakan model berbasis CNN "
-    "(Convolutional Neural Network) yang telah dilatih."
+    "(Convolutional Neural Network) yang telah dilatih dan memiliki akurasi tinggi."
 )
 
 uploaded_file = st.file_uploader("Upload image", type=["jpg", "png", "jpeg"])
