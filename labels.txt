@@ -1,3 +1,4 @@
+not_shark
 tiger_shark
 whale_shark
 white_shark
