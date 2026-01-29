@@ -8,7 +8,7 @@ import base64
 # CONFIG
 # =========================
 MODEL_PATH = "shark_model.tflite"
-BACKGROUND_IMAGE = "background.png"
+BACKGROUND_IMAGE = "1080.png"
 IMG_SIZE = 224
 
 CLASS_NAMES = [
@@ -25,7 +25,7 @@ st.set_page_config(
 )
 
 # =========================
-# BACKGROUND + DARK MODE
+# BACKGROUND + CENTER LAYOUT
 # =========================
 def set_background(image_file):
     with open(image_file, "rb") as f:
@@ -34,53 +34,52 @@ def set_background(image_file):
     st.markdown(
         f"""
         <style>
-        /* Paksa dark mode */
         :root {{
             color-scheme: dark;
         }}
 
-        /* Background */
         .stApp {{
             background:
                 linear-gradient(
-                    rgba(0,0,0,0.55),
-                    rgba(0,0,0,0.55)
+                    rgba(0,0,0,0.65),
+                    rgba(0,0,0,0.65)
                 ),
-                url("data:image/jpg;base64,{encoded}");
+                url("data:image/png;base64,{encoded}");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             min-height: 100vh;
         }}
 
-        /* Teks global */
-        html, body, [class*="css"] {{
-            color: #ffffff !important;
+        /* CENTER CONTAINER */
+        .center-container {{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 15vh;
+            text-align: center;
         }}
 
-        h1, h2, h3 {{
-            color: #ffffff !important;
-        }}
-
-        p, span, label {{
-            color: #e5e7eb !important;
-        }}
-
-        /* Card effect */
+        /* CARD */
         .block-container {{
             background-color: rgba(0, 0, 0, 0.45);
             padding: 2rem;
-            border-radius: 16px;
+            border-radius: 10px;
+            max-width: 650px;
         }}
 
-        /* File uploader */
+        /* FILE UPLOADER */
         div[data-testid="stFileUploader"] {{
-            background-color: rgba(0,0,0,0.5);
-            padding: 12px;
-            border-radius: 12px;
+            background-color: rgba(0,0,0,0.55);
+            padding: 14px;
+            border-radius: 14px;
         }}
 
-        /* Mobile fix */
+        h1, h2, h3, p, span, label {{
+            color: #ffffff !important;
+        }}
+
         @media (max-width: 768px) {{
             .stApp {{
                 background-position: center top;
@@ -107,11 +106,16 @@ input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
 # =========================
-# UI
+# UI (CENTERED)
 # =========================
+st.markdown('<div class="center-container">', unsafe_allow_html=True)
+
 st.title("🦈 Shark Species Identifier")
 st.write("Upload foto hiu, sistem akan memprediksi spesiesnya.")
-st.caption("Sistem identifikasi Shark Species Identifies menggunakan Model berbasis CNN (Convolutional Neural Network) yang sudah dilatih dan memiliki akurasi tinggi")
+st.caption(
+    "Sistem identifikasi Shark Species menggunakan model CNN "
+    "(Convolutional Neural Network) yang telah dilatih dan memiliki akurasi tinggi."
+)
 
 uploaded_file = st.file_uploader(
     "Upload gambar hiu (JPG / PNG)",
@@ -123,7 +127,7 @@ uploaded_file = st.file_uploader(
 # =========================
 if uploaded_file:
     image = Image.open(uploaded_file).convert("RGB")
-    st.image(image, caption="Uploaded Image", use_column_width=True)
+    st.image(image, width=600)
 
     img = image.resize((IMG_SIZE, IMG_SIZE))
     img_array = np.array(img).astype(np.float32) / 255.0
@@ -133,10 +137,11 @@ if uploaded_file:
     interpreter.invoke()
 
     prediction = interpreter.get_tensor(output_details[0]["index"])[0]
-
     class_idx = int(np.argmax(prediction))
     confidence = float(np.max(prediction))
 
     st.subheader(f"Prediction: **{CLASS_NAMES[class_idx]}**")
     st.progress(confidence)
     st.write(f"Confidence: **{confidence:.2%}**")
+
+st.markdown('</div>', unsafe_allow_html=True)
