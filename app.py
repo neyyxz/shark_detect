@@ -2,9 +2,37 @@ import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image
+import base64
 
 MODEL_PATH = "shark_model.tflite"
 
+# =========================
+# BACKGROUND IMAGE
+# =========================
+def set_background(image_file):
+    with open(image_file, "rb") as f:
+        encoded = base64.b64encode(f.read()).decode()
+
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/jpg;base64,{encoded}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# panggil background
+set_background("background.png")
+
+# =========================
+# LOAD MODEL
+# =========================
 @st.cache_resource
 def load_tflite_model():
     interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
@@ -23,9 +51,24 @@ CLASS_NAMES = [
     "whitetip_shark",
 ]
 
+# =========================
+# UI
+# =========================
+st.markdown(
+    """
+    <div style="background-color: rgba(0,0,0,0.6);
+                padding: 20px;
+                border-radius: 15px;">
+    """,
+    unsafe_allow_html=True
+)
+
 st.title("🦈 Shark Species Identifier")
 st.write("Upload foto hiu, sistem akan memprediksi spesiesnya.")
-st.write("Sistem ini menggunakan model berbasis CNN (Convolutional Neural Network) yang sudah dilatih dan memiliki tingkat akuarasi tinggi")
+st.write(
+    "Sistem ini menggunakan model berbasis CNN "
+    "(Convolutional Neural Network) yang telah dilatih."
+)
 
 uploaded_file = st.file_uploader("Upload image", type=["jpg", "png", "jpeg"])
 
@@ -48,3 +91,4 @@ if uploaded_file:
     st.subheader(f"Prediction: {CLASS_NAMES[class_idx]}")
     st.write(f"Confidence: {confidence:.2%}")
 
+st.markdown("</div>", unsafe_allow_html=True)
