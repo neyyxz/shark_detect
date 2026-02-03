@@ -1,0 +1,5 @@
+Carcharhinus_Longimanus
+Carcharodon_Carcharias
+Galeocerdo_Cuvier
+not_shark
+Rhincodon_Typus
